@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 
 void ex_1();
 void ex_2();
@@ -50,7 +51,7 @@ void ex_3(){
     int lastStrPos = 0;
 
     for (int i = 0; i < strlen(inputStr); i++) {
-        if (isspace(inputStr[i])) {
+        if (isspace(inputStr[i]) || inputStr[i] == ',') {
             for (int z = lastStrPos; z < i; z++) {
                 printf("%c", inputStr[z]);
             }
@@ -88,39 +89,60 @@ void tinyGrep() {
         }
     }
 
-    for(int h = 0; h < strlen(searchStr); h++) {
-        if(searchStr[h] == '_'){
-            char whiteSpaces[6] = {'\n',' ','\f','\r','\t','\v'};
-            for (int r = 0; r < 6; r++) {
-                searchStr[h] = whiteSpaces[r];
-                char *pos = strstr(inputStr, searchStr);
-                if (pos) {
-                    printf("Matches at position %ld.", pos-inputStr);
+    bool isDot = true;
+    bool isMatch = false;
+    bool spaceMatch = false;
+
+    int y = 0;
+    int i;
+    int z = 0;
+
+    for (i = 0; i < strlen(inputStr); i++) {
+        for (int x = y; x < strlen(searchStr); x++) {
+            if (searchStr[x] == '_') {
+                char whiteSpaces[6] = {'\n',' ','\f','\r','\t','\v'};
+                for (int r = 0; r < 6; r++) {
+                    searchStr[x] = whiteSpaces[r];
+                    char *pos = strstr(inputStr, searchStr);
+                    if (pos) {
+                        isDot = false;
+                        spaceMatch = true;
+                        isMatch = true;
+                        z = pos - inputStr;
+                        goto check;
+                    }
+                }
+            }
+            if (searchStr[x] != '.') {
+                isDot = false;
+                if (inputStr[i] != searchStr[x]){
+                    isMatch = false;
+                    continue;
+                } else if (inputStr[i] == searchStr[x]) {
+                    isMatch = true;
+                    y++;
                     break;
                 }
             }
         }
-        if(searchStr[h] == '.'){
-            char possibleChars[54] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ',', ' ', 'a', 'b', 'c', 'd', 'e', 'f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-            for (int l = 0; l < 54; l++){
-                searchStr[h] = possibleChars[l];
-                char *pos = strstr(inputStr, searchStr);
-                if (pos) {
-                    printf("Matches at position %ld.", pos-inputStr);
-                    break;
-                }
+        check:
+        if (y == (strlen(searchStr) - 1)){
+            if (i != 0) {
+                i = i - 1;
             }
+            z = i;
+            break;
+        }
+        if (spaceMatch) {
+            break;
         }
     }
-
-    char *pos = strstr(inputStr, searchStr);
-    if (pos) {
-        printf("Matches at position %ld.", pos-inputStr);
-    } else {
-        printf("No match.");
+    if (isDot == true) {
+        printf("Matched at position 0");
+    } else if (isDot == false) {
+        if (isMatch == true) {
+            printf("Matched at position %d", z);
+        } else if (isMatch == false) {
+            printf("No Match");
+        }
     }
-}
-
-
-
-
