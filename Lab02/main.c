@@ -113,6 +113,15 @@ void tinyGrep() {
                     }
                 }
             }
+            /*
+            Main Logic:
+            If char is not a '.', compare whether it is the same as the other. If its not, then just skip 
+            the current loop as the string is not going to match anyways. If it matches, "move" the indexes of both arrays 
+            by 1.
+            
+            isMatch: Whether the input char has matched with pattern char
+            isDot: Whether the string contains all dots
+            */
             if (searchStr[x] != '.') {
                 isDot = false;
                 if (inputStr[i] != searchStr[x]){
@@ -125,6 +134,11 @@ void tinyGrep() {
                 }
             }
         }
+        /* This helps break out of the for loop:
+        Two conditions:
+        (1) if the pattern string has been traversed and it matches with input string [variable y]
+        (2) if it matches on a isspace() character
+        */
         check:
         if (y == (strlen(searchStr) - 1)){
             if (i != 0) {
@@ -137,6 +151,9 @@ void tinyGrep() {
             break;
         }
     }
+    /*
+    Printing Logic: This might be the potential cause of some issues
+    */
     if (isDot == true) {
         printf("Matched at position 0");
     } else if (isDot == false) {
