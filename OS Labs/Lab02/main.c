@@ -8,7 +8,7 @@ int SJFNonPreemptScheduler(void);
 int FCFSScheduler(void);
 
 int main(void) {
-  FCFSScheduler();
+  SJFNonPreemptScheduler();
 }
 
 int roundRobinScheduler(void){
@@ -93,6 +93,7 @@ int SJFNonPreemptScheduler(void){
   scanf("%d", &numProc);
 
   int burstTimes[numProc], procOrder[numProc];
+  double burstSums[numProc], waitSums[numProc];
 
   for (int i = 0; i < numProc; i++){
       printf("Enter the burst times for process %d\n", i+1);
@@ -117,11 +118,20 @@ int SJFNonPreemptScheduler(void){
 
       burstSum += burstTimes[i];
       waitSum += burstSum - burstTimes[i];
-      printf("Process %d has burst time %d\n", procOrder[i], burstTimes[i]);
-      printf("Process %d has turnaround time %.2f\n", procOrder[i], burstSum);
-      printf("Process %d has waiting time %.2f\n", procOrder[i], burstSum - burstTimes[i]);
+      //These arrays are just to arrange the output in ascending order of process number
+      burstSums[procOrder[i]-1] = burstSum;
+      waitSums[procOrder[i]-1] = burstSum - burstTimes[i];
+      printf("Process %d executes\n", procOrder[i]);
+      //printf("Process %d has burst time %d\n", procOrder[i], burstTimes[i]);
+      //printf("Process %d has turnaround time %.2f\n", procOrder[i], burstSum);
+      //printf("Process %d has waiting time %.2f\n", procOrder[i], burstSum - burstTimes[i]);
   }
 
+  //Print output in ascending order of process number
+  for (int j = 0; j < sizeof(burstSums)/sizeof(burstSums[0]); j++){
+      printf("Process %d has turnaround time %.2f, waiting time %.2f\n", j+1, burstSums[j], waitSums[j]);
+  }
+  
   printf("Average turnaround time is %.2f\n", burstSum/numProc);
   printf("Average waiting time is %.2f\n", waitSum/numProc);
 
